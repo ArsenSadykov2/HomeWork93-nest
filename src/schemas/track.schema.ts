@@ -1,13 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Document } from 'mongoose';
+import { Album } from './album.schema';
 
 export type TracksDocument = Tracks & Document;
 
 @Schema()
 export class Tracks {
-  @Prop({ required: true })
-  album: mongoose.Schema.Types.ObjectId;
+  @Prop({
+    required: true,
+    ref: 'Album',
+    type: mongoose.Schema.Types.ObjectId,
+  })
+  album: Album;
 
   @Prop({ required: true })
   name: string;
@@ -20,9 +25,6 @@ export class Tracks {
 
   @Prop({ default: null, type: Boolean })
   isPublished: false;
-
-  @Prop()
-  author: mongoose.Schema.Types.ObjectId;
 }
 
 export const TracksSchema = SchemaFactory.createForClass(Tracks);
