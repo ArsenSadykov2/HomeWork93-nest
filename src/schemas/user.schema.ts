@@ -20,8 +20,8 @@ const SALT_WORK_FACTOR = 10;
 export class User {
   @Prop({ required: true, unique: true })
   username: string;
-  @Prop({ unique: true })
-  email: string;
+  @Prop({ required: true, unique: true })
+  email: string | null;
 
   @Prop({
     required: true,
@@ -30,8 +30,8 @@ export class User {
   })
   role: UserRole;
 
-  @Prop()
-  displayName: string;
+  @Prop({ required: true })
+  displayName: string | null;
 
   @Prop({ required: true })
   password: string;
