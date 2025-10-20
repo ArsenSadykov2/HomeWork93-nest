@@ -2,7 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import bcrypt from 'bcrypt';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
+export interface UserMethods {
+  checkPassword(password: string): Promise<boolean>;
+  generateToken(): void;
+}
+
+export type UserDocument = User & Document & UserMethods;
 
 const SALT_WORK_FACTORY = 10;
 
