@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import { Model } from 'mongoose';
@@ -17,21 +24,36 @@ export class UsersController {
   registerUser(@Body() userData: RegisterUserDTO) {
     const user = new this.userModel({
       username: userData.username,
-      password: userData.password,
+      email: userData.email,
       displayName: userData.displayName,
+      password: userData.password,
     });
 
     user.generateToken();
     return user.save();
   }
-
   @Post('sessions')
   async login(@Body() userData: LoginUserDto) {
     const { username, password } = userData;
     const user = await this.authService.validateUser(username, password);
+
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Неверный логин или пароль');
     }
-    return user;
+
+    return {
+      user: {
+        _id: user._id,
+        username: user.username,
+        displayName: '',
+        email: '',
+      },
+      token: user.token,
+    };
+  }
+
+  @Delete(':id')
+  logout(@Param('id') id: string) {
+    return this.userModel.deleteOne({ _id: id });
   }
 }
